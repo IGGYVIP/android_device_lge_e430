@@ -29,14 +29,29 @@ import init.lge.rc
 import init.vee3.usb.rc
 import init.target.rc
 
+on fs
+    mount_all fstab.vee3e
+
+    mkdir /persist 0771 system system
+    mkdir /persist-lg  0771 system system
+    mkdir /mpt 0771 system system
+
+    wait /dev/block/platform/msm_sdcc.3/by-num/p15
+    exec /system/bin/e2fsck -fy /dev/block/platform/msm_sdcc.3/by-num/p15
+    mount ext4 /dev/block/platform/msm_sdcc.3/by-num/p15 /persist nosuid nodev barrier=1
+
+    wait /dev/block/platform/msm_sdcc.3/by-num/p18
+    exec /system/bin/e2fsck -fy /dev/block/platform/msm_sdcc.3/by-num/p18
+    mount ext4 /dev/block/platform/msm_sdcc.3/by-num/p18 /persist-lg nosuid nodev barrier=1
+
+    wait /dev/block/platform/msm_sdcc.3/by-num/p23
+    exec /system/bin/e2fsck -fy /dev/block/platform/msm_sdcc.3/by-num/p23
+    mount ext4 /dev/block/platform/msm_sdcc.3/by-num/p23 /mpt nosuid nodev barrier=1
+
 #LGE_CHANGE_S [jyothishre.nk@lge.com] 20120926:Use setup_fs to create Filesystem
 #LGE_CHANGE_S [jyothishre.nk@lge.com] 20120928:remove persist partition and add externalSD support
 on init
     exec /sbin/setup_fs \
-	/dev/block/platform/msm_sdcc.3/by-num/p20 \
-	/dev/block/platform/msm_sdcc.3/by-num/p16 \
-	/dev/block/platform/msm_sdcc.3/by-num/p18 \
-	/dev/block/platform/msm_sdcc.3/by-num/p23 \
 	/dev/block/platform/msm_sdcc.3/by-num/p25 \
 	no_reboot
 
